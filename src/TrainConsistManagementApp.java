@@ -1,5 +1,4 @@
 import java.util.*;
-import java.util.stream.Collectors;
 
 class Bogie {
     private String name;
@@ -33,22 +32,15 @@ public class TrainConsistManagementApp {
         List<Bogie> bogieList = new ArrayList<>();
         bogieList.add(new Bogie("Sleeper", 72));
         bogieList.add(new Bogie("AC Chair", 56));
-        bogieList.add(new Bogie("Sleeper", 72));       // duplicate type
         bogieList.add(new Bogie("First Class", 24));
-        bogieList.add(new Bogie("AC Chair", 56));      // duplicate type
 
-        // Step 2: Group using Stream API
-        Map<String, List<Bogie>> groupedBogies = bogieList.stream()
-                .collect(Collectors.groupingBy(Bogie::getName));
+        // Step 2: Stream → map → reduce
+        int totalCapacity = bogieList.stream()
+                .map(b -> b.getCapacity())   // extract capacity
+                .reduce(0, Integer::sum);    // aggregate
 
-        // Step 3: Display grouped result
-        System.out.println("Grouped Bogies by Type:");
-        for (Map.Entry<String, List<Bogie>> entry : groupedBogies.entrySet()) {
-            System.out.println("\nBogie Type: " + entry.getKey());
-            for (Bogie b : entry.getValue()) {
-                b.display();
-            }
-        }
+        // Step 3: Display total
+        System.out.println("Total Seating Capacity of Train: " + totalCapacity);
 
         // Step 4: Verify original list unchanged
         System.out.println("\nOriginal Bogie List:");
