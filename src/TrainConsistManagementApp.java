@@ -1,44 +1,45 @@
-import java.util.Arrays;
-
 public class TrainConsistManagementApp {
 
-    // 🔹 Method to sort bogie names
-    public static void sortBogieNames(String[] bogieNames) {
-        Arrays.sort(bogieNames); // Built-in sorting
-    }
+    // 🔹 Linear Search Method
+    public static boolean linearSearch(String[] bogieIds, String key) {
 
-    // 🔹 Utility Method to Print Array
-    public static void printArray(String[] arr) {
-        System.out.println(Arrays.toString(arr));
+        for (int i = 0; i < bogieIds.length; i++) {
+
+            // 🔹 Compare using equals()
+            if (bogieIds[i].equals(key)) {
+                return true; // Match found
+            }
+        }
+
+        return false; // Not found
     }
 
     // 🔹 Main Method
     public static void main(String[] args) {
 
-        // 🔹 Test Case 1: Basic Unsorted Input
-        String[] bogies1 = {"Sleeper", "AC Chair", "First Class", "General", "Luxury"};
-        System.out.println("Before Sorting:");
-        printArray(bogies1);
+        // 🔹 Test Dataset
+        String[] bogies = {"BG101", "BG205", "BG309", "BG412", "BG550"};
 
-        sortBogieNames(bogies1);
+        // 🔹 Test Case 1: Found in Middle
+        String search1 = "BG309";
+        System.out.println("Searching " + search1 + ": " + linearSearch(bogies, search1));
 
-        System.out.println("After Sorting:");
-        printArray(bogies1);
+        // 🔹 Test Case 2: Not Found
+        String search2 = "BG999";
+        System.out.println("Searching " + search2 + ": " + linearSearch(bogies, search2));
 
-        // 🔹 Test Case 2: Unsorted Input
-        String[] bogies2 = {"Luxury", "General", "Sleeper", "AC Chair"};
-        sortBogieNames(bogies2);
+        // 🔹 Test Case 3: First Element
+        String search3 = "BG101";
+        System.out.println("Searching " + search3 + ": " + linearSearch(bogies, search3));
 
-        // 🔹 Test Case 3: Already Sorted
-        String[] bogies3 = {"AC Chair", "First Class", "General"};
-        sortBogieNames(bogies3);
+        // 🔹 Test Case 4: Last Element
+        String search4 = "BG550";
+        System.out.println("Searching " + search4 + ": " + linearSearch(bogies, search4));
 
-        // 🔹 Test Case 4: Duplicate Values
-        String[] bogies4 = {"Sleeper", "AC Chair", "Sleeper", "General"};
-        sortBogieNames(bogies4);
-
-        // 🔹 Test Case 5: Single Element
-        String[] bogies5 = {"Sleeper"};
-        sortBogieNames(bogies5);
+        // 🔹 Test Case 5: Single Element Array
+        String[] singleBogie = {"BG101"};
+        String search5 = "BG101";
+        System.out.println("Searching " + search5 + " in single array: "
+                + linearSearch(singleBogie, search5));
     }
 }
