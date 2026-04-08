@@ -1,57 +1,84 @@
 import java.util.*;
-
-class GoodsBogie {
-    private String type;   // e.g., Cylindrical, Open, Box
-    private String cargo;  // e.g., Petroleum, Coal, Grain
-
-    // Constructor
-    public GoodsBogie(String type, String cargo) {
-        this.type = type;
-        this.cargo = cargo;
-    }
-
-    // Getters
-    public String getType() {
-        return type;
-    }
-
-    public String getCargo() {
-        return cargo;
-    }
-
-    // Display method
-    public void display() {
-        System.out.println(type + " Bogie carrying " + cargo);
-    }
-}
+import java.util.stream.Collectors;
 
 public class TrainConsistManagementApp {
-    public static void main(String[] args) {
 
-        // Step 1: Create Goods Bogie List
-        List<GoodsBogie> goodsList = new ArrayList<>();
-        goodsList.add(new GoodsBogie("Cylindrical", "Petroleum"));
-        goodsList.add(new GoodsBogie("Open", "Coal"));
-        goodsList.add(new GoodsBogie("Box", "Grain"));
+    // 🔹 Bogie Class
+    static class Bogie {
+        private String id;
+        private int capacity;
 
-        // Step 2: Apply Safety Validation using Stream
-        boolean isSafe = goodsList.stream()
-                .allMatch(b ->
-                        !b.getType().equalsIgnoreCase("Cylindrical")
-                                || b.getCargo().equalsIgnoreCase("Petroleum")
-                );
-
-        // Step 3: Display Result
-        if (isSafe) {
-            System.out.println("Train is SAFE for operation.");
-        } else {
-            System.out.println("Train is NOT SAFE! Invalid cargo detected.");
+        public Bogie(String id, int capacity) {
+            this.id = id;
+            this.capacity = capacity;
         }
 
-        // Step 4: Display Bogies
-        System.out.println("\nGoods Bogie Details:");
-        for (GoodsBogie b : goodsList) {
-            b.display();
+        public int getCapacity() {
+            return capacity;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        @Override
+        public String toString() {
+            return "Bogie{id='" + id + "', capacity=" + capacity + "}";
+        }
+    }
+
+    // 🔹 Loop-Based Filtering
+    public static List<Bogie> filterUsingLoop(List<Bogie> bogies) {
+        List<Bogie> result = new ArrayList<>();
+
+        for (Bogie b : bogies) {
+            if (b.getCapacity() > 60) {
+                result.add(b);
+            }
+        }
+        return result;
+    }
+
+    // 🔹 Stream-Based Filtering
+    public static List<Bogie> filterUsingStream(List<Bogie> bogies) {
+        return bogies.stream()
+                .filter(b -> b.getCapacity() > 60)
+                .collect(Collectors.toList());
+    }
+
+    // 🔹 Main Method (Performance Benchmark)
+    public static void main(String[] args) {
+
+        // 🔹 Create Large Dataset
+        List<Bogie> bogies = new ArrayList<>();
+        for (int i = 1; i <= 100000; i++) {
+            bogies.add(new Bogie("B" + i, (int)(Math.random() * 100)));
+        }
+
+        // 🔹 Loop Benchmark
+        long startLoop = System.nanoTime();
+        List<Bogie> loopResult = filterUsingLoop(bogies);
+        long endLoop = System.nanoTime();
+        long loopTime = endLoop - startLoop;
+
+        // 🔹 Stream Benchmark
+        long startStream = System.nanoTime();
+        List<Bogie> streamResult = filterUsingStream(bogies);
+        long endStream = System.nanoTime();
+        long streamTime = endStream - startStream;
+
+        // 🔹 Output Results
+        System.out.println("Loop Result Count: " + loopResult.size());
+        System.out.println("Stream Result Count: " + streamResult.size());
+
+        System.out.println("Loop Execution Time (ns): " + loopTime);
+        System.out.println("Stream Execution Time (ns): " + streamTime);
+
+        // 🔹 Validate Results
+        if (loopResult.size() == streamResult.size()) {
+            System.out.println("✅ Results Match!");
+        } else {
+            System.out.println("❌ Results Do Not Match!");
         }
     }
 }
