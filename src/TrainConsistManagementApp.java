@@ -1,84 +1,78 @@
-import java.util.*;
-import java.util.stream.Collectors;
-
 public class TrainConsistManagementApp {
 
-    // 🔹 Bogie Class
-    static class Bogie {
-        private String id;
+    // 🔹 Custom Exception Class
+    static class InvalidCapacityException extends Exception {
+        public InvalidCapacityException(String message) {
+            super(message);
+        }
+    }
+
+    // 🔹 Passenger Bogie Class
+    static class PassengerBogie {
+        private String type;
         private int capacity;
 
-        public Bogie(String id, int capacity) {
-            this.id = id;
+        // Constructor with validation
+        public PassengerBogie(String type, int capacity) throws InvalidCapacityException {
+            if (capacity <= 0) {
+                throw new InvalidCapacityException("Capacity must be greater than zero");
+            }
+            this.type = type;
             this.capacity = capacity;
+        }
+
+        public String getType() {
+            return type;
         }
 
         public int getCapacity() {
             return capacity;
         }
 
-        public String getId() {
-            return id;
-        }
-
         @Override
         public String toString() {
-            return "Bogie{id='" + id + "', capacity=" + capacity + "}";
+            return "PassengerBogie{type='" + type + "', capacity=" + capacity + "}";
         }
     }
 
-    // 🔹 Loop-Based Filtering
-    public static List<Bogie> filterUsingLoop(List<Bogie> bogies) {
-        List<Bogie> result = new ArrayList<>();
-
-        for (Bogie b : bogies) {
-            if (b.getCapacity() > 60) {
-                result.add(b);
-            }
-        }
-        return result;
-    }
-
-    // 🔹 Stream-Based Filtering
-    public static List<Bogie> filterUsingStream(List<Bogie> bogies) {
-        return bogies.stream()
-                .filter(b -> b.getCapacity() > 60)
-                .collect(Collectors.toList());
-    }
-
-    // 🔹 Main Method (Performance Benchmark)
+    // 🔹 Main Method (Testing Flow)
     public static void main(String[] args) {
 
-        // 🔹 Create Large Dataset
-        List<Bogie> bogies = new ArrayList<>();
-        for (int i = 1; i <= 100000; i++) {
-            bogies.add(new Bogie("B" + i, (int)(Math.random() * 100)));
+        try {
+            // ✅ Valid Bogie Creation
+            PassengerBogie b1 = new PassengerBogie("Sleeper", 72);
+            PassengerBogie b2 = new PassengerBogie("AC Chair", 60);
+
+            System.out.println("Created Successfully:");
+            System.out.println(b1);
+            System.out.println(b2);
+
+            // ❌ Invalid Bogie (Negative Capacity)
+            PassengerBogie b3 = new PassengerBogie("First Class", -10);
+
+        } catch (InvalidCapacityException e) {
+            System.out.println("Exception Caught: " + e.getMessage());
         }
 
-        // 🔹 Loop Benchmark
-        long startLoop = System.nanoTime();
-        List<Bogie> loopResult = filterUsingLoop(bogies);
-        long endLoop = System.nanoTime();
-        long loopTime = endLoop - startLoop;
+        try {
+            // ❌ Invalid Bogie (Zero Capacity)
+            PassengerBogie b4 = new PassengerBogie("Sleeper", 0);
 
-        // 🔹 Stream Benchmark
-        long startStream = System.nanoTime();
-        List<Bogie> streamResult = filterUsingStream(bogies);
-        long endStream = System.nanoTime();
-        long streamTime = endStream - startStream;
+        } catch (InvalidCapacityException e) {
+            System.out.println("Exception Caught: " + e.getMessage());
+        }
 
-        // 🔹 Output Results
-        System.out.println("Loop Result Count: " + loopResult.size());
-        System.out.println("Stream Result Count: " + streamResult.size());
+        try {
+            // ✅ Multiple Valid Bogies
+            PassengerBogie b5 = new PassengerBogie("First Class", 40);
+            PassengerBogie b6 = new PassengerBogie("AC Chair", 80);
 
-        System.out.println("Loop Execution Time (ns): " + loopTime);
-        System.out.println("Stream Execution Time (ns): " + streamTime);
+            System.out.println("More Valid Bogies:");
+            System.out.println(b5);
+            System.out.println(b6);
 
-        // 🔹 Validate Results
-        if (loopResult.size() == streamResult.size()) {
-            System.out.println("✅ Results Match!");
-        } else {
-            System.out.println("❌ Results Do Not Match!");
+        } catch (InvalidCapacityException e) {
+            System.out.println("Exception Caught: " + e.getMessage());
         }
     }
 }
